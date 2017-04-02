@@ -1,0 +1,17 @@
+{
+  "name": "bedrock-angular-qr-scanner-demo",
+  "version": "0.0.1-0",
+  "private": true,
+  "main": "./main.js",
+  "moduleType": [
+    "amd"
+  ],
+  "ignore": [],
+  "dependencies": {
+    "bedrock-angular": "^2.0.0",
+    "bedrock-angular-modal": "^3.0.0",
+    "pako": "^1.0.5",
+    "angular-qrcode": "^7.2.0",
+    "bedrock-angular-form": "^2.13.1"
+  }
+}

@@ -1,0 +1,1 @@
+# bedrock-angular-qr-scanner
