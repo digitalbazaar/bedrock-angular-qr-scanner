@@ -23,6 +23,7 @@ function Ctrl($element, $window) {
   var self = this;
   self.devices = null;
   self.working = false;
+  var animationFrame;
   var context;
   var video;
   var width;
@@ -98,7 +99,7 @@ function Ctrl($element, $window) {
   };
 
   function tick() {
-    requestAnimationFrame(tick);
+    animationFrame = $window.requestAnimationFrame(tick);
     if(video.readyState === video.HAVE_ENOUGH_DATA) {
       context.drawImage(video, 0, 0, width, height);
       var imageData = context.getImageData(0, 0, width, height);
@@ -118,6 +119,9 @@ function Ctrl($element, $window) {
   };
 
   self.$onDestroy = function() {
+    if($window.cancelAnimationFrame) {
+      $window.cancelAnimationFrame(animationFrame);
+    }
     if($window.localMediaStream) {
       $window.localMediaStream.stop();
     }
