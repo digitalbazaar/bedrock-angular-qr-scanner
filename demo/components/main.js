@@ -9,8 +9,8 @@ define([
 'use strict';
 
 var module = angular.module('qr-scanner-demo', [
-  'bedrock.qr-scanner' // ,
-  // 'monospaced.qrcode'
+  'bedrock.qr-scanner',
+  'monospaced.qrcode'
 ]);
 
 Array.prototype.slice.call(arguments, 1).forEach(function(register) {
