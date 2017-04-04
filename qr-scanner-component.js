@@ -28,6 +28,7 @@ function Ctrl($element, $window) {
   var video;
   var width;
   var height;
+  var videoStream;
 
   window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
   navigator.getUserMedia = navigator.getUserMedia ||
@@ -75,6 +76,7 @@ function Ctrl($element, $window) {
               }
             }
           }, function(stream) {
+            videoStream = stream;
             // rotate view for front facing devices
             if(!self.backDevice || self.backDevice.length === 0) {
               canvas.setAttribute(
@@ -116,6 +118,7 @@ function Ctrl($element, $window) {
   }
 
   self.$onDestroy = function() {
+    videoStream.getTracks()[0].stop();
     if($window.cancelAnimationFrame) {
       $window.cancelAnimationFrame(animationFrame);
     }
