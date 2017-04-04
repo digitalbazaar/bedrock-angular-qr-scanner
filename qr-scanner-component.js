@@ -85,7 +85,11 @@ function Ctrl($element, $window) {
             angular.element($element).append(video);
             angular.element($element).append(canvas);
             context = canvas.getContext('2d');
-            successCallback(stream);
+            video.src =
+              (window.URL && window.URL.createObjectURL(stream)) || stream;
+            self.video = video;
+            video.play();
+            console.log('Stream started...');
           }, function(err) {
             console.error('Error using device:', err);
             self.onVideoError({error: err});
@@ -110,13 +114,6 @@ function Ctrl($element, $window) {
       }
     }
   }
-
-  var successCallback = function(stream) {
-    console.log('Stream started...');
-    video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-    self.video = video;
-    video.play();
-  };
 
   self.$onDestroy = function() {
     if($window.cancelAnimationFrame) {
