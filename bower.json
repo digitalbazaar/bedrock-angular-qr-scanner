@@ -12,6 +12,7 @@
     "package.json"
   ],
   "dependencies": {
-    "bedrock-angular": "^2.0.0"
+    "bedrock-angular": "^2.0.0",
+    "webrtc-adapter": "^3.3.1"
   }
 }
