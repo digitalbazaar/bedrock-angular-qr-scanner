@@ -1,22 +1,28 @@
 <div class="row">
-  <br-qr-scanner br-width="640" br-height="360"
-    br-on-success="$ctrl.setData(data)"
-    br-on-error="onError(error)">
-  </br-qr-scanner>
-  <h3>Scanned QR Data</h3>
-  <h5 ng-if="!$ctrl.data">NONE</h5>
-  <div ng-if="$ctrl.data">
-    <h5>RAW Data</h5>
-    <pre>{{$ctrl.data}}</pre>
-  <div ng-if="$ctrl.decoded">
-    <h5>Decoded</h5>
-    <pre>{{$ctrl.decoded|json}}</pre>
-  </div>
+  <div class="col-md-12">
+    <br-qr-scanner br-resolution="1024" br-width="320" br-height="320"
+      br-on-success="$ctrl.setData(data)"
+      br-on-error="onError(error)">
+    </br-qr-scanner>
   </div>
 </div>
-<div class="row text-center">
-  <h3>QR Code</h3>
-  <div>
+<div class="row">
+  <div class="col-md-12">
+    <h3>Scanned QR Data</h3>
+    <h5 ng-if="!$ctrl.data">NONE</h5>
+    <div ng-if="$ctrl.data">
+      <h5>RAW Data</h5>
+      <pre>{{$ctrl.data}}</pre>
+      <div ng-if="$ctrl.decoded">
+        <h5>Decoded</h5>
+        <pre>{{$ctrl.decoded|json}}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h3>QR Code</h3>
     <img ng-if="$ctrl.working || !$ctrl.barcodeData"
       src="https://upload.wikimedia.org/wikipedia/commons/c/ca/1x1.png" height="500">
     <qrcode ng-if="!$ctrl.working && $ctrl.barcodeData"
@@ -27,18 +33,18 @@
   </div>
 </div>
 <div class="row" ng-model-options="{debounce: 1000}">
-  <div class="text-center">
+  <div class="col-md-12">
     <h3>Original VC Data</h3>
     <h4>
       You may update the JSON and the QR code will update and grow or shrink
       to the appropriate number of nodes.
     </h4>
+    <br-textarea type="text" br-model="$ctrl.vcText"
+      br-options="{
+        name: 'json',
+        label: 'JSON',
+        rows: 35
+      }" br-textarea-required>
+    </br-textarea>
   </div>
-  <br-textarea type="text" br-model="$ctrl.vcText"
-    br-options="{
-      name: 'json',
-      label: 'JSON',
-      rows: 35
-    }" br-textarea-required>
-  </br-textarea>
 </div>
