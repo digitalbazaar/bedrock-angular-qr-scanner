@@ -8,10 +8,11 @@
   ],
   "ignore": [],
   "dependencies": {
+    "angular-qrcode": "^7.2.0",
     "bedrock-angular": "^2.0.0",
+    "bedrock-angular-form": "^2.13.1",
     "bedrock-angular-modal": "^3.0.0",
     "pako": "^1.0.5",
-    "angular-qrcode": "^7.2.0",
-    "bedrock-angular-form": "^2.13.1"
+    "webrtc-adapter": "^3.3.1"
   }
 }
