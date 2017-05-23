@@ -1,26 +1,23 @@
 /*!
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
-define(['angular', './jsqr-src/jsqr'], function(angular, jsQR) {
+import angular from 'angular';
+import jsQR from './jsqr-src/jsqr.js';
 
-'use strict';
-
-function register(module) {
-  module.component('brQrScanner', {
-    bindings: {
-      // minimum x and y resolution
-      resolution: '<brResolution',
-      // display width
-      width: '<brWidth',
-      // display height
-      height: '<brHeight',
-      onSuccess: '&brOnSuccess',
-      onError: '&brOnError',
-      onVideoError: '&brOnVideoError'
-    },
-    controller: Ctrl
-  });
-}
+export default {
+  bindings: {
+    // minimum x and y resolution
+    resolution: '<brResolution',
+    // display width
+    width: '<brWidth',
+    // display height
+    height: '<brHeight',
+    onSuccess: '&brOnSuccess',
+    onError: '&brOnError',
+    onVideoError: '&brOnVideoError'
+  },
+  controller: Ctrl
+};
 
 /*
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -60,7 +57,7 @@ function register(module) {
 */
 
 /* @ngInject */
-function Ctrl($element, $window, brMediaQueryService) {
+function Ctrl($element, $window) {
   var self = this;
   self.devices = null;
   self.working = false;
@@ -117,21 +114,21 @@ function Ctrl($element, $window, brMediaQueryService) {
       console.log('Stream started...');
       self.video = video;
       // Older browsers may not have srcObject
-      if ('srcObject' in video) {
+      if('srcObject' in video) {
         video.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
         video.src =
           (window.URL && window.URL.createObjectURL(stream)) || stream;
       }
-      video.onloadedmetadata = function(e) {
+      video.onloadedmetadata = function() {
         video.play();
         requestAnimationFrame(tick);
       };
     }).catch(function(err) {
       console.error('Error using device:', err);
       self.onVideoError({error: err});
-      //console.error(err.name + ": " + err.message);
+      // console.error(err.name + ": " + err.message);
     });
 
     /*
@@ -206,13 +203,13 @@ function Ctrl($element, $window, brMediaQueryService) {
       var sy = 0;
       var sWidth = video.videoWidth;
       var sHeight = video.videoHeight;
-      var sAspect = sWidth/sHeight;
+      var sAspect = sWidth / sHeight;
       // canvas destination
       var dx = 0;
       var dy = 0;
       var dWidth = width;
       var dHeight = height;
-      var dAspect = dWidth/dHeight;
+      var dAspect = dWidth / dHeight;
 
       // Crop source if needed to fit into destination with same aspect ratio.
       // This is used to account for differences in source and destination
@@ -244,13 +241,9 @@ function Ctrl($element, $window, brMediaQueryService) {
   }
 
   self.$onDestroy = function() {
-    videoStream.getTracks().map(function(t) { t.stop() });
+    videoStream.getTracks().map(function(t) {t.stop();});
     if($window.cancelAnimationFrame) {
       $window.cancelAnimationFrame(animationFrame);
     }
   };
 }
-
-return register;
-
-});

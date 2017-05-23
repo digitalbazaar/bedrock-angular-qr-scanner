@@ -1,17 +1,12 @@
 /*!
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
-define(['pako'], function(pako) {
+import pako from 'pako';
 
-'use strict';
-
-function register(module) {
-  module.component('demoHome', {
-    controller: Ctrl,
-    templateUrl: requirejs.toUrl(
-      'bedrock-angular-qr-scanner-demo/demo-component.html')
-  });
-}
+export default {
+  controller: Ctrl,
+  templateUrl: 'bedrock-angular-qr-scanner-demo/demo-component.html'
+};
 
 /* @ngInject */
 function Ctrl($scope) {
@@ -92,7 +87,3 @@ function Ctrl($scope) {
     $scope.$apply();
   };
 }
-
-return register;
-
-});
