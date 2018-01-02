@@ -2,7 +2,8 @@
 var ZXing = function(ZXing) {
   ZXing = ZXing || {};
 
-var Module = typeof ZXing !== "undefined" ? ZXing : {};
+var Module;
+if (!Module) Module = typeof ZXing !== 'undefined' ? ZXing : {};
 Module.ENVIRONMENT = "WEB";
 var moduleOverrides = {};
 var key;
@@ -3974,15 +3975,15 @@ var FS = {
    });
    this.setErrno(errno);
    this.message = ERRNO_MESSAGES[errno];
-   if (this.stack) Object.defineProperty(this, "stack", {
-    value: (new Error).stack
-   });
+   // if (this.stack) Object.defineProperty(this, "stack", {
+   //  value: (new Error).stack
+   // });
   };
   FS.ErrnoError.prototype = new Error;
   FS.ErrnoError.prototype.constructor = FS.ErrnoError;
   [ ERRNO_CODES.ENOENT ].forEach((function(code) {
    FS.genericErrors[code] = new FS.ErrnoError(code);
-   FS.genericErrors[code].stack = "<generic error, no stack>";
+   // FS.genericErrors[code].stack = "<generic error, no stack>";
   }));
  }),
  staticInit: (function() {

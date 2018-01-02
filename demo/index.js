@@ -7,6 +7,7 @@ const bedrock = require('bedrock');
 require('bedrock-express');
 require('bedrock-server');
 require('bedrock-views');
+require('bedrock-webpack');
 
 require('./config');
 

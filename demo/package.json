@@ -19,6 +19,7 @@
     "bedrock-server": "^2.0.0",
     "bedrock-validation": "^2.2.1",
     "bedrock-views": "^5.0.0",
+    "bedrock-webpack": "^1.2.0",
     "pako": "^1.0.5",
     "webrtc-adapter": "^3.3.1"
   },
