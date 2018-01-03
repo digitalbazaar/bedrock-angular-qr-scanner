@@ -64,7 +64,6 @@ function Ctrl($element, $window) {
   self.working = false;
   let animationFrame;
   let context;
-  let context2;
   let video;
   let resolution;
   let width;
@@ -72,8 +71,9 @@ function Ctrl($element, $window) {
   let videoStream;
   let zxing;
   let zxingMemoryAllocated = false;
-  let zxingMemoryPtr;
-  let frameArray;
+  let frameBufferBytes = 0;
+  let frameBufferPtr = 0;
+  let frameBuffer;
 
   window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
@@ -89,11 +89,6 @@ function Ctrl($element, $window) {
     canvas.setAttribute('id', 'qr-canvas');
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
-
-    const canvas2 = $window.document.createElement('canvas');
-    canvas2.setAttribute('id', 'qr-canvas2');
-    canvas2.setAttribute('width', width);
-    canvas2.setAttribute('height', height);
 
     const constraints = {
       video: {
@@ -121,9 +116,7 @@ function Ctrl($element, $window) {
       */
       angular.element($element).append(video);
       angular.element($element).append(canvas);
-      angular.element($element).append(canvas2);
       context = canvas.getContext('2d');
-      context2 = canvas2.getContext('2d');
       console.log('Stream started...');
       self.video = video;
       // Older browsers may not have srcObject
@@ -245,53 +238,34 @@ function Ctrl($element, $window) {
         sx, sy, sWidth, sHeight,
         dx, dy, dWidth, dHeight);
       const imageData = context.getImageData(dx, dy, dWidth, dHeight);
-      // const data = imageData.data;
-      // for(let i = 0; i < data.length; i += 4) {
-      //   const brightness =
-      //     0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
-      //   // red
-      //   data[i] = brightness;
-      //   // green
-      //   data[i + 1] = brightness;
-      //   // blue
-      //   data[i + 2] = brightness;
-      // }
-      // overwrite original image
-      // context2.putImageData(imageData, 0, 0, 0, 0, dWidth, dHeight);
 
       // TODO: arrange fallback to pure js
       // const data = jsQR.decodeQRFromImage(
       //   imageData.data, imageData.width, imageData.height);
 
       // TODO: can imageData.length be computed before the first capture?
+      // FIXME: what happens if the orientation changes, do the dimensions
+      // change?
       if(!zxingMemoryAllocated) {
-        zxingMemoryPtr = zxing._malloc(dWidth * dHeight);
-        // zxingMemoryPtr = zxing._malloc(imageData.data.length);
-        // TODO: for later
-        // zxingMemArray = new Uint8Array(wasmModule.wasmMemory.buffer, jsMemLoc, bytes);
-        frameArray = new Uint8Array(dWidth * dHeight);
+        frameBufferBytes = dWidth * dHeight;
+        frameBufferPtr = zxing._malloc(frameBufferBytes);
+        frameBuffer = new Uint8Array(
+          zxing.HEAPU8.buffer, frameBufferPtr, frameBufferBytes);
         zxingMemoryAllocated = true;
       }
-      // TODO: write imageData directly to xing linear memory
-      // write just the R component of the 4 byte pixel data to linear memory
-      for(let i = 0; i < dWidth * dHeight; i++) {
-        frameArray[i] = imageData.data[i * 4];
+      // write 1 byte per pixel, the R component, of the 4 byte pixel data
+      // directly to linear memory
+      for(let i = 0; i < frameBufferBytes; i++) {
+        frameBuffer[i] = imageData.data[i * 4];
       }
-      // copy the image to zxing's linear memory
-      zxing.HEAPU8.set(frameArray, zxingMemoryPtr);
-      // zxing.HEAPU8.set(imageData.data, zxingMemoryPtr);
       const ptr = zxing._decode_qr(
-        zxingMemoryPtr, imageData.width, imageData.height);
+        frameBufferPtr, imageData.width, imageData.height);
       const detected_codes = new zxing.VectorZXingResult(ptr);
       for(let i = 0; i < detected_codes.size(); i++) {
         console.log(detected_codes.get(i).data);
         self.onSuccess({data: detected_codes.get(i).data});
       }
       detected_codes.delete();
-
-      // if(data) {
-      //   self.onSuccess({data: data});
-      // }
     }
   }
 
