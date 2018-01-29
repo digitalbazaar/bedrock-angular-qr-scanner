@@ -1,26 +1,23 @@
 /*!
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
-define(['angular', './jsqr-src/jsqr'], function(angular, jsQR) {
+import angular from 'angular';
+import jsQR from './jsqr-src/jsqr.js';
 
-'use strict';
-
-function register(module) {
-  module.component('brQrScanner', {
-    bindings: {
-      // minimum x and y resolution
-      resolution: '<brResolution',
-      // display width
-      width: '<brWidth',
-      // display height
-      height: '<brHeight',
-      onSuccess: '&brOnSuccess',
-      onError: '&brOnError',
-      onVideoError: '&brOnVideoError'
-    },
-    controller: Ctrl
-  });
-}
+export default {
+  bindings: {
+    // minimum x and y resolution
+    resolution: '<brResolution',
+    // display width
+    width: '<brWidth',
+    // display height
+    height: '<brHeight',
+    onSuccess: '&brOnSuccess',
+    onError: '&brOnError',
+    onVideoError: '&brOnVideoError'
+  },
+  controller: Ctrl
+};
 
 /*
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
@@ -39,7 +36,7 @@ function register(module) {
     navigator.mediaDevices.getUserMedia = function(constraints) {
 
       // First get ahold of the legacy getUserMedia, if present
-      var getUserMedia = navigator.webkitGetUserMedia ||
+      const getUserMedia = navigator.webkitGetUserMedia ||
         navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
       // Some browsers just don't implement it - return a rejected promise with
@@ -60,33 +57,33 @@ function register(module) {
 */
 
 /* @ngInject */
-function Ctrl($element, $window, brMediaQueryService) {
-  var self = this;
+function Ctrl($element, $window) {
+  const self = this;
   self.devices = null;
   self.working = false;
-  var animationFrame;
-  var context;
-  var video;
-  var resolution;
-  var width;
-  var height;
-  var videoStream;
+  let animationFrame;
+  let context;
+  let video;
+  let resolution;
+  let width;
+  let height;
+  let videoStream;
 
   window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
-  self.$onInit = function() {
+  self.$onInit = () => {
     resolution = self.resolution || 480;
     width = self.width || 320;
     height = self.height || 240;
 
     video = $window.document.createElement('video');
     video.setAttribute('style', 'display:none;');
-    var canvas = $window.document.createElement('canvas');
+    const canvas = $window.document.createElement('canvas');
     canvas.setAttribute('id', 'qr-canvas');
     canvas.setAttribute('width', width);
     canvas.setAttribute('height', height);
 
-    var constraints = {
+    const constraints = {
       video: {
         facingMode: 'environment',
         width: {
@@ -99,7 +96,7 @@ function Ctrl($element, $window, brMediaQueryService) {
         }
       }
     };
-    navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+    navigator.mediaDevices.getUserMedia(constraints).then(stream => {
       videoStream = stream;
       /*
       // rotate view for front facing devices
@@ -117,21 +114,21 @@ function Ctrl($element, $window, brMediaQueryService) {
       console.log('Stream started...');
       self.video = video;
       // Older browsers may not have srcObject
-      if ('srcObject' in video) {
+      if('srcObject' in video) {
         video.srcObject = stream;
       } else {
         // Avoid using this in new browsers, as it is going away.
         video.src =
           (window.URL && window.URL.createObjectURL(stream)) || stream;
       }
-      video.onloadedmetadata = function(e) {
+      video.onloadedmetadata = () => {
         video.play();
         requestAnimationFrame(tick);
       };
-    }).catch(function(err) {
+    }).catch(err => {
       console.error('Error using device:', err);
       self.onVideoError({error: err});
-      //console.error(err.name + ": " + err.message);
+      // console.error(err.name + ": " + err.message);
     });
 
     /*
@@ -202,17 +199,17 @@ function Ctrl($element, $window, brMediaQueryService) {
     animationFrame = $window.requestAnimationFrame(tick);
     if(video.readyState === video.HAVE_ENOUGH_DATA) {
       // video source
-      var sx = 0;
-      var sy = 0;
-      var sWidth = video.videoWidth;
-      var sHeight = video.videoHeight;
-      var sAspect = sWidth/sHeight;
+      let sx = 0;
+      let sy = 0;
+      let sWidth = video.videoWidth;
+      let sHeight = video.videoHeight;
+      const sAspect = sWidth / sHeight;
       // canvas destination
-      var dx = 0;
-      var dy = 0;
-      var dWidth = width;
-      var dHeight = height;
-      var dAspect = dWidth/dHeight;
+      const dx = 0;
+      const dy = 0;
+      const dWidth = width;
+      const dHeight = height;
+      const dAspect = dWidth / dHeight;
 
       // Crop source if needed to fit into destination with same aspect ratio.
       // This is used to account for differences in source and destination
@@ -234,8 +231,8 @@ function Ctrl($element, $window, brMediaQueryService) {
         video,
         sx, sy, sWidth, sHeight,
         dx, dy, dWidth, dHeight);
-      var imageData = context.getImageData(dx, dy, dWidth, dHeight);
-      var data = jsQR.decodeQRFromImage(
+      const imageData = context.getImageData(dx, dy, dWidth, dHeight);
+      const data = jsQR.decodeQRFromImage(
         imageData.data, imageData.width, imageData.height);
       if(data) {
         self.onSuccess({data: data});
@@ -243,14 +240,10 @@ function Ctrl($element, $window, brMediaQueryService) {
     }
   }
 
-  self.$onDestroy = function() {
-    videoStream.getTracks().map(function(t) { t.stop() });
+  self.$onDestroy = () => {
+    videoStream.getTracks().map(t => t.stop());
     if($window.cancelAnimationFrame) {
       $window.cancelAnimationFrame(animationFrame);
     }
   };
 }
-
-return register;
-
-});

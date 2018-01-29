@@ -1,23 +1,19 @@
 /*!
  * Copyright (c) 2017 Digital Bazaar, Inc. All rights reserved.
  */
-define(['pako'], function(pako) {
+import pako from 'pako';
+import * as qrcode from 'qrcode-generator';
 
-'use strict';
-
-function register(module) {
-  module.component('demoHome', {
-    controller: Ctrl,
-    templateUrl: requirejs.toUrl(
-      'bedrock-angular-qr-scanner-demo/demo-component.html')
-  });
-}
+export default {
+  controller: Ctrl,
+  templateUrl: 'bedrock-angular-qr-scanner-demo/demo-component.html'
+};
 
 /* @ngInject */
 function Ctrl($scope) {
-  var self = this;
+  const self = this;
   self.working = false;
-  var dict = '@contextCredentialLinkedDataSignature2015signatureValuetype' +
+  const dict = '@contextCredentialLinkedDataSignature2015signatureValuetype' +
     'issuehttps://w3id.org/https://checkpoint.veres.io/';
   self.vc = {
     "@context": [
@@ -51,22 +47,22 @@ function Ctrl($scope) {
 
   self.vcText = JSON.stringify(self.vc, null, 2);
 
-  $scope.$watch(function() {
+  $scope.$watch(() => {
     return self.vcText;
   }, function(newVal, oldVal) {
     if(newVal !== oldVal) {
       self.working = true;
       self.barcodeData = deflate(self.vcText);
-      $scope.$evalAsync(function() {
+      $scope.$evalAsync(() => {
         self.working = false;
       });
     }
   });
 
   function deflate(txt) {
-    var rVal;
+    let rVal;
     try {
-      var t = JSON.stringify(JSON.parse(txt));
+      const t = JSON.stringify(JSON.parse(txt));
       rVal = pako.deflate(t, {
         to: 'string',
         level: 9,
@@ -80,7 +76,7 @@ function Ctrl($scope) {
 
   self.barcodeData = deflate(self.vcText);
 
-  self.setData = function(data) {
+  self.setData = data => {
     console.log('QR Data:', data);
     self.data = data;
     try {
@@ -92,7 +88,3 @@ function Ctrl($scope) {
     $scope.$apply();
   };
 }
-
-return register;
-
-});
